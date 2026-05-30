@@ -2,7 +2,7 @@
 
 ## What You're Getting
 
-1. **`geo-audit-tracker.html`** — The campaign page (dark, premium design with live progress ring, agency cards, leaderboard, and CEO input form)
+1. **`index.html`** — The campaign page (dark, premium design with live progress ring, agency cards, leaderboard, and CEO input form)
 2. **`google-apps-script-backend.js`** — The backend code that connects the page to a Google Sheet for shared, live data
 
 ---
@@ -42,12 +42,26 @@
 
 ## Step 3: Host the Campaign Page
 
+Before hosting, open `index.html` and paste your deployed Apps Script Web App URL into this line:
+
+```js
+const BACKEND_URL = '';
+```
+
+It should look like this:
+
+```js
+const BACKEND_URL = 'https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec';
+```
+
+Once this is set, every visitor uses the same backend automatically. They do **not** need to paste the backend URL themselves.
+
 **Option A — Simplest (local file):**
-- Just open `geo-audit-tracker.html` in a browser and share it via Google Drive / email
+- Just open `index.html` in a browser and share it via Google Drive / email
 
 **Option B — Free hosting (recommended for sharing):**
 1. Go to [Netlify Drop](https://app.netlify.com/drop) or [Vercel](https://vercel.com)
-2. Drag & drop the `geo-audit-tracker.html` file
+2. Drag & drop the `index.html` file
 3. Get a shareable URL instantly — share it with all CEOs
 
 **Option C — Google Sites:**
@@ -56,13 +70,14 @@
 
 ---
 
-## Step 4: Connect
+## Step 4: Verify
 
 1. Open the campaign page in a browser
-2. In the top config bar, paste the Google Apps Script Web App URL
-3. Click **Connect**
-4. Status should show "Connected ✓"
-5. The URL is saved in browser storage — CEOs only need to do this once
+2. Confirm the page loads the numbers from the Google Sheet
+3. Submit a test update for one agency
+4. Confirm the Google Sheet and the numbers on the page both update
+
+If `BACKEND_URL` is left blank, the page shows the old config bar and each browser must connect manually. For CEO sharing, keep `BACKEND_URL` filled before hosting.
 
 ---
 

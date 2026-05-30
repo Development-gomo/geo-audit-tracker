@@ -565,7 +565,7 @@
   <div class="spinner"></div>
 </div>
 
-<div class="container" style="padding-top: 80px;">
+<div class="container" id="pageContainer">
 
   <!-- HEADER -->
   <header class="header">
@@ -665,21 +665,28 @@ const AGENCIES = [
 ];
 const TOTAL_TARGET = 56;
 const DEADLINE = new Date('2026-07-01T00:00:00');
+const REFRESH_INTERVAL_MS = 30000;
 
-let API_URL = localStorage.getItem('geo_api_url') || '';
+// Paste the deployed Google Apps Script Web App URL here before hosting.
+// Example: https://script.google.com/macros/s/AKfycbx.../exec
+const BACKEND_URL = 'https://script.google.com/macros/s/AKfycbyeYoB2AyeS_abQPb4UADMnH-6e8BncQLAszGzUC_n1rBV35-4bxp3X1v8yRgL5GDJU/exec';
+
+let API_URL = getApiUrl();
 let agencyData = JSON.parse(JSON.stringify(AGENCIES));
+let refreshTimer = null;
 
 // ─── INIT ───
 document.addEventListener('DOMContentLoaded', () => {
   updateDaysLeft();
   populateSelect();
   enableSubmitCheck();
+  configureBackendUi();
 
   if (API_URL) {
-    document.getElementById('apiUrlInput').value = API_URL;
     document.getElementById('configStatus').textContent = 'Connected';
     document.getElementById('configStatus').classList.remove('disconnected');
     fetchData();
+    startAutoRefresh();
   } else {
     // Demo mode — use defaults
     renderAll();
@@ -694,6 +701,33 @@ function saveApiUrl() {
   localStorage.setItem('geo_api_url', url);
   document.getElementById('configStatus').textContent = 'Connecting…';
   fetchData();
+  startAutoRefresh();
+}
+
+function getApiUrl() {
+  const configuredUrl = BACKEND_URL.trim();
+  return configuredUrl || localStorage.getItem('geo_api_url') || '';
+}
+
+function configureBackendUi() {
+  const configuredUrl = BACKEND_URL.trim();
+  const configBar = document.getElementById('configBar');
+  const pageContainer = document.getElementById('pageContainer');
+  const input = document.getElementById('apiUrlInput');
+
+  if (configuredUrl) {
+    configBar.style.display = 'none';
+    pageContainer.style.paddingTop = '40px';
+    return;
+  }
+
+  input.value = API_URL;
+  pageContainer.style.paddingTop = '80px';
+}
+
+function startAutoRefresh() {
+  if (refreshTimer) clearInterval(refreshTimer);
+  refreshTimer = setInterval(fetchData, REFRESH_INTERVAL_MS);
 }
 
 // ─── DATA FETCH ───
@@ -748,6 +782,7 @@ async function submitUpdate() {
         headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify({ action: 'update', id, sold: count }),
       });
+      await fetchData();
       showToast('Updated successfully!');
     } catch (e) {
       showToast('Saved locally — backend sync failed', true);
