@@ -544,8 +544,22 @@
     .main-progress { gap: 24px; }
     .ring-container { width: 180px; height: 180px; }
     .ring-center .number { font-size: 40px; }
-    .form-row { flex-direction: column; }
-    .btn { width: 100%; }
+    .form-row {
+      flex-direction: column;
+      align-items: stretch;
+      width: 100%;
+    }
+    .form-group {
+      width: 100%;
+      min-width: 0;
+      flex: none;
+    }
+    .form-group select,
+    .form-group input,
+    .btn {
+      width: 100%;
+      min-width: 0;
+    }
     .agency-grid { grid-template-columns: 1fr; }
   }
 </style>
