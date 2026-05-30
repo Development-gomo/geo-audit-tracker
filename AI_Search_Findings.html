@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>What AI Search Does With a Brand — Research Findings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0F1419;
+    --ink-soft:#3a4250;
+    --muted:#6b7585;
+    --line:#e6e8ed;
+    --line-soft:#f0f2f5;
+    --paper:#ffffff;
+    --paper-2:#fafbfc;
+    --dark:#171c28;
+    --dark-2:#1e2533;
+    --accent:#1b3a5b;
+    --accent-soft:#5a7891;
+    --serif-num:'Source Sans 3',sans-serif;
+    --maxw:840px;
+    --maxw-wide:980px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    font-family:'Source Sans 3',-apple-system,BlinkMacSystemFont,sans-serif;
+    color:var(--ink);
+    background:var(--paper);
+    font-size:17px;
+    line-height:1.65;
+    font-weight:400;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 32px}
+  .wrap-wide{max-width:var(--maxw-wide);margin:0 auto;padding:0 32px}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    background:var(--dark);
+    color:#fff;
+    padding:130px 0 110px;
+  }
+  .hero .eyebrow{
+    font-size:12.5px;font-weight:600;letter-spacing:.22em;
+    text-transform:uppercase;color:#a8b5c8;margin-bottom:48px;
+  }
+  .hero h1{
+    font-weight:600;font-size:clamp(36px,5.4vw,58px);line-height:1.08;
+    letter-spacing:-0.02em;margin-bottom:36px;max-width:18ch;
+  }
+  .hero .deck{
+    font-size:clamp(18px,2vw,21px);color:#d4dae5;line-height:1.55;
+    font-weight:300;max-width:58ch;
+  }
+  .hero .meta{
+    margin-top:80px;padding-top:36px;border-top:1px solid rgba(255,255,255,.14);
+    display:grid;grid-template-columns:repeat(3,1fr);gap:48px;
+  }
+  .hero .meta dt{font-size:11.5px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:#8a97ac;margin-bottom:10px}
+  .hero .meta dd{font-size:15px;color:#e8edf3;line-height:1.5;font-weight:400}
+  .hero .meta dd b{display:block;font-weight:600;color:#fff;font-size:17px;margin-bottom:4px}
+
+  /* ---------- HEADLINE FIVE ---------- */
+  .headline-section{padding:110px 0 90px;background:var(--paper)}
+  .section-label{
+    font-size:12px;font-weight:600;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:24px;
+  }
+  .lead-h{
+    font-weight:600;font-size:clamp(28px,3.4vw,38px);line-height:1.15;
+    letter-spacing:-0.02em;color:var(--ink);max-width:22ch;margin-bottom:8px;
+  }
+  .lead-deck{font-size:18px;color:var(--muted);max-width:55ch;margin-bottom:64px;font-weight:400}
+
+  .h-line{
+    display:grid;grid-template-columns:64px 1fr;gap:32px;
+    padding:34px 0;border-top:1px solid var(--line);
+  }
+  .h-line:last-child{border-bottom:1px solid var(--line)}
+  .h-line .num{
+    font-size:36px;font-weight:300;color:var(--accent);
+    line-height:1;letter-spacing:-0.01em;font-variant-numeric:lining-nums;
+  }
+  .h-line p{
+    font-size:clamp(18px,2vw,21px);color:var(--ink);font-weight:400;
+    line-height:1.45;max-width:54ch;letter-spacing:-0.005em;
+  }
+  .h-line p strong{font-weight:600;color:var(--ink)}
+
+  /* ---------- SECTION ---------- */
+  section.block{padding:100px 0;border-top:1px solid var(--line)}
+  section.block.alt{background:var(--paper-2)}
+
+  .sec-head{margin-bottom:64px;max-width:36em}
+  .sec-context{
+    font-size:12px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:20px;
+  }
+  h2.sec-title{
+    font-weight:600;font-size:clamp(28px,3.6vw,42px);line-height:1.1;
+    letter-spacing:-0.022em;color:var(--ink);max-width:18ch;margin-bottom:18px;
+  }
+  .sec-deck{font-size:18px;color:var(--ink-soft);font-weight:400;line-height:1.55;max-width:60ch}
+
+  /* finding */
+  .finding{margin-bottom:56px}
+  .finding:last-child{margin-bottom:0}
+  .finding h3{
+    font-weight:600;font-size:23px;line-height:1.25;letter-spacing:-0.015em;
+    margin-bottom:18px;max-width:48ch;color:var(--ink);
+  }
+  .finding p{font-size:17px;color:var(--ink-soft);line-height:1.62;margin-bottom:14px;max-width:64ch}
+  .finding p:last-child{margin-bottom:0}
+  .finding p strong{font-weight:600;color:var(--ink)}
+
+  .verify-note{
+    margin-top:22px;padding:18px 22px;background:var(--paper);
+    border:1px solid var(--line);border-left:2px solid var(--accent-soft);
+    font-size:14.5px;color:var(--muted);line-height:1.55;max-width:64ch;
+  }
+  section.alt .verify-note{background:#fff}
+  .verify-note .vtag{font-weight:600;color:var(--accent);letter-spacing:.04em}
+
+  /* number row */
+  .numrow{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:48px;
+    margin:48px 0 56px;padding:36px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+  }
+  .numrow .item .n{
+    font-size:48px;font-weight:300;line-height:1;color:var(--ink);
+    letter-spacing:-0.025em;font-variant-numeric:lining-nums;margin-bottom:10px;
+  }
+  .numrow .item .n sup{font-size:.55em;font-weight:400;vertical-align:super;color:var(--accent)}
+  .numrow .item .lab{font-size:14px;color:var(--muted);line-height:1.45;max-width:24ch}
+
+  /* table */
+  .tab{margin-top:48px;border-top:1px solid var(--ink)}
+  .tab table{width:100%;border-collapse:collapse;font-size:15px}
+  .tab thead th{
+    text-align:left;padding:14px 18px 14px 0;border-bottom:1px solid var(--ink);
+    font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  }
+  .tab thead th.num,.tab tbody td.num{text-align:right;font-variant-numeric:tabular-nums}
+  .tab tbody td{
+    padding:18px 18px 18px 0;border-bottom:1px solid var(--line);
+    color:var(--ink-soft);vertical-align:top;
+  }
+  .tab tbody td.lead{font-weight:500;color:var(--ink)}
+  .tab tbody td.num{font-weight:500;color:var(--ink)}
+  .tab tbody td:last-child{padding-right:0;color:var(--ink)}
+  .through-close{
+    margin-top:40px;font-size:19px;color:var(--ink);max-width:60ch;
+    font-weight:400;line-height:1.5;letter-spacing:-0.005em;
+  }
+
+  /* scope */
+  .scope{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);margin-top:32px;border:1px solid var(--line)}
+  .scope > div{background:#fff;padding:36px 32px}
+  section.alt .scope > div{background:var(--paper-2)}
+  .scope h4{font-weight:600;font-size:18px;margin-bottom:6px;letter-spacing:-0.01em}
+  .scope .stag{font-size:11.5px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+  .scope ul{list-style:none}
+  .scope li{padding:11px 0;border-top:1px solid var(--line);font-size:15.5px;color:var(--ink-soft)}
+  .scope li:first-child{border-top:none}
+  .scope li b{color:var(--ink);font-weight:600;display:block;margin-bottom:2px}
+  .scope p{font-size:14.5px;color:var(--muted);margin-top:14px;line-height:1.5}
+
+  /* verification list */
+  .vlist{margin-top:36px;border-top:1px solid var(--line)}
+  .vrow{
+    display:grid;grid-template-columns:80px 110px 1fr;gap:28px;
+    padding:22px 0;border-bottom:1px solid var(--line);align-items:baseline;
+  }
+  .vrow .vcode{font-size:13px;font-weight:600;letter-spacing:.18em;color:var(--muted)}
+  .vrow .vresult{
+    font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink);
+  }
+  .vrow .vresult.pass{color:var(--accent)}
+  .vrow .vresult.rev{color:#8a5e1f}
+  .vrow .vresult.ref{color:var(--muted)}
+  .vrow .vtext b{font-weight:600;color:var(--ink);display:block;margin-bottom:3px;font-size:16px}
+  .vrow .vtext span{font-size:15px;color:var(--ink-soft);line-height:1.55}
+
+  /* CLOSER */
+  .closer{background:var(--dark);color:#fff;padding:140px 0 130px}
+  .closer .pull{
+    font-weight:300;font-size:clamp(28px,4vw,44px);line-height:1.2;
+    letter-spacing:-0.02em;max-width:22ch;
+  }
+  .closer .pull b{font-weight:600;color:#fff}
+  .closer .pull em{font-style:normal;color:#a8b5c8}
+  .closer .note{
+    margin-top:60px;padding-top:30px;border-top:1px solid rgba(255,255,255,.14);
+    font-size:13.5px;color:#8a97ac;line-height:1.6;max-width:60ch;letter-spacing:0;
+  }
+
+  @media (max-width:780px){
+    .hero .meta{grid-template-columns:1fr;gap:28px}
+    .numrow{grid-template-columns:1fr;gap:32px;padding:28px 0}
+    .scope{grid-template-columns:1fr}
+    .vrow{grid-template-columns:1fr;gap:8px;padding:24px 0}
+    .h-line{grid-template-columns:50px 1fr;gap:18px}
+    section.block{padding:72px 0}
+    .hero{padding:90px 0 70px}
+    .hero .meta{margin-top:54px}
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">Future of Digital Experiences · Research Findings</div>
+    <h1>What AI search does with a brand.</h1>
+    <p class="deck">The empirical layer beneath the strategic storyline. What ChatGPT, Google AI Overview and Microsoft Copilot actually surface, cite and recommend across the heavy commercial-vehicle, construction-equipment and industrial-engine space. Findings only.</p>
+    <dl class="meta">
+      <div><dt>Dataset</dt><dd><b>17,526 responses</b>250 prompts · 3 markets · 3 LLMs · 8 repeated runs</dd></div>
+      <div><dt>Citations</dt><dd><b>142,451</b>22–27 May 2026, plus Ahrefs enrichment of the top 500 cited URLs</dd></div>
+      <div><dt>Verification</dt><dd><b>Five checks complete</b>Two pass, one revised, two reframed</dd></div>
+    </dl>
+  </div>
+</header>
+
+<!-- HEADLINE -->
+<section class="headline-section">
+  <div class="wrap">
+    <div class="section-label">The headline</div>
+    <h2 class="lead-h">Five lines, if it has to compress to five.</h2>
+    <p class="lead-deck">Each is a quantified claim drawn from the cuts that follow.</p>
+
+    <div class="h-line">
+      <div class="num">01</div>
+      <p>On comparison prompts, the three LLMs agree on <strong>which brands to recommend 73% of the time</strong>. They cite almost entirely different sources to justify it.</p>
+    </div>
+    <div class="h-line">
+      <div class="num">02</div>
+      <p>Nine in ten of the URLs these engines cite most have <strong>no measurable Google ranking</strong>. AI citation and SEO rank are nearly orthogonal systems.</p>
+    </div>
+    <div class="h-line">
+      <div class="num">03</div>
+      <p>In the top 100 cited URLs, <strong>one in five is a "vs" comparison</strong>; one in five is a "best-of" list. Press releases and Wikipedia combined: one in fifty.</p>
+    </div>
+    <div class="h-line">
+      <div class="num">04</div>
+      <p>Manufacturers are named in AI answers <strong>roughly seven times more often than their own websites are cited</strong>. The brand story is assembled from third parties.</p>
+    </div>
+    <div class="h-line">
+      <div class="num">05</div>
+      <p>Fire the same prompt repeatedly and <strong>the top recommended brand changes 58% of the time</strong>. A single answer is one sample of a distribution, not "what the engine says".</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1 -->
+<section class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-context">Track B — rewrite content to be cited</div>
+      <h2 class="sec-title">The evidence chain has broken away from search.</h2>
+      <p class="sec-deck">Ranking in Google and being cited by an LLM turn out to be different games. The format that gets cited is not the format most brand sites publish.</p>
+    </div>
+
+    <div class="numrow">
+      <div class="item"><div class="n">93<sup>%</sup></div><div class="lab">of top 500 cited URLs have no tracked organic keywords</div></div>
+      <div class="item"><div class="n">5<sup>%</sup></div><div class="lab">rank in Google's top three for anything</div></div>
+      <div class="item"><div class="n">39<sup>%</sup></div><div class="lab">of top 100 cited URLs are "vs" or "best-of" content</div></div>
+    </div>
+
+    <div class="finding">
+      <h3>The pages LLMs cite are largely invisible in Google.</h3>
+      <p>Of the 500 most-cited URLs, 93% have zero tracked organic keywords. Only 5% rank in the top three for anything. The median URL-Rating of the top 100 is zero.</p>
+      <p>Ranking well in Google does not get you cited. Being cited does not require ranking. <strong>Optimising one does not deliver the other.</strong></p>
+      <div class="verify-note"><span class="vtag">V2 — Pass.</span> Only 5.2% of the no-keyword URLs are German or Swedish-language pages. Non-English coverage is not driving the result.</div>
+    </div>
+
+    <div class="finding">
+      <h3>The format that gets cited is comparison, not corporate.</h3>
+      <p>Among the top 100 cited URLs, 20% are "vs" or "versus" pages and 19% are "best of" or "top N" lists. A further 18% of the top 500 are market-outlook and forecast pages — research firms such as GM Insights, Mordor Intelligence and Statista punch well above their weight. 18% match electrification, EV, battery or zero-emission keywords in the URL.</p>
+      <p><strong>LLMs preferentially pull from explicit comparison and quantified outlook content.</strong> It is the opposite of the brand-narrative prose most OEM sites publish.</p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 -->
+<section class="block alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-context">Track E — community and third-party strategy</div>
+      <h2 class="sec-title">Ninety percent of the story is told off your domains.</h2>
+      <p class="sec-deck">The empirical core of the deck's off-domain argument. The brand conversation happens almost entirely on third-party ground.</p>
+    </div>
+
+    <div class="numrow">
+      <div class="item"><div class="n">~7<sup>×</sup></div><div class="lab">more brand mentions in text than citations to the brand's own site</div></div>
+      <div class="item"><div class="n">23 / 7</div><div class="lab">aggregator vs manufacturer pages in the top 100 cited URLs</div></div>
+      <div class="item"><div class="n">12,778</div><div class="lab">unique cited domains. The top ten hold 13.3%.</div></div>
+    </div>
+
+    <div class="finding">
+      <h3>Brands are talked about far more than their own sites are cited.</h3>
+      <p>Across tracked manufacturers on unbranded prompts, brands are named in response text roughly seven times as often as their own domain is cited. Median self-source ratio is 0.105; aggregate 0.146. An owned site appears for about one in ten of the times a brand is discussed.</p>
+      <p><strong>Owned-media investment converts into AI visibility only indirectly, through third parties who cite or discuss the brand.</strong></p>
+      <div class="verify-note"><span class="vtag">V3 — Revised.</span> An earlier "~14×" figure used mismatched bases (8 runs of mentions against 6 days of citations). With aligned bases the multiplier is ~7×. Direction unchanged.</div>
+    </div>
+
+    <div class="finding">
+      <h3>When LLMs agree on the recommendation, they agree on the brand — not the evidence.</h3>
+      <p>Compared engine-to-engine on the same prompt and market, mean agreement on the brand set is 0.41. Mean agreement on the URL set is 0.035. A twelve-fold gap. On branded comparison prompts, 73% of engine pairs name the same brands while citing essentially disjoint URLs. Median pairwise source overlap between any two engines is 0.074.</p>
+      <p><strong>There is no single source of record. The conclusion is stable. The evidence chain behind it is contested and substitutable.</strong></p>
+    </div>
+
+    <div class="finding">
+      <h3>Resale marketplaces outrank manufacturer websites as sources.</h3>
+      <p>Of the top 100 most-cited URLs, 23 are used-equipment and aggregator pages — truck1.eu, used-machinery marketplaces, dealer aggregators. Seven are manufacturer-owned.</p>
+      <p><strong>The highest-value citation real estate sits with third-party commercial sites, not OEM .coms.</strong></p>
+    </div>
+
+    <div class="finding">
+      <h3>Reddit is a real source. On one engine only.</h3>
+      <p>Forum and Reddit threads are 6.2% of top-cited URLs. SearchGPT accounts for the overwhelming majority. Copilot and AI Overview rarely cite Reddit, even on identical prompts. YouTube, separately, is one of the single largest sources overall.</p>
+      <p><strong>Community-channel investment matters, but it pays off very differently across engines.</strong></p>
+    </div>
+
+    <div class="finding">
+      <h3>Some brands are named but almost never linked.</h3>
+      <p>When BYD, John Deere, JCB or Tesla Semi are named in a response, a link to the brand is included fewer than one time in seven: BYD 8%, John Deere 10%, JCB 13%, Tesla Semi 13%. At the other end of the scale, Yanmar, Caterpillar, Yutong, Volvo Buses and Volvo CE are linked 59–67% of the time they are named.</p>
+      <p><strong>Narrative presence and citation presence are separate currencies. They diverge sharply by brand.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3 -->
+<section class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-context">Track A — shift KPI to AI visibility</div>
+      <h2 class="sec-title">A single LLM run is not "the answer".</h2>
+      <p class="sec-deck">The strongest argument for continuous, multi-engine measurement. The engines disagree with each other. They also disagree with themselves.</p>
+    </div>
+
+    <div class="numrow">
+      <div class="item"><div class="n">58<sup>%</sup></div><div class="lab">top recommended brand changes between repeated runs</div></div>
+      <div class="item"><div class="n">&lt;8<sup>%</sup></div><div class="lab">source overlap between any two engines on the same prompt</div></div>
+      <div class="item"><div class="n">47.5<sup>%</sup></div><div class="lab">of citations appear on only a single day</div></div>
+    </div>
+
+    <div class="finding">
+      <h3>The lead recommendation is unstable from one run to the next.</h3>
+      <p>Firing the same prompt repeatedly, the top recommended brand changes at least once in 58% of unbranded cases. SearchGPT highest at 65%. AI Overview lowest at 53%.</p>
+      <p><strong>AI visibility can only be measured as a distribution over repeated, tracked observations. One observation is not a measurement.</strong></p>
+      <div class="verify-note"><span class="vtag">V1 — Reframed.</span> The eight repeated runs came from a single 44-minute export window, not eight separate days. This is the model's own sampling stochasticity under fixed input, not day-to-day drift. With the model and the web both unchanged, the answer still moves 58% of the time.</div>
+    </div>
+
+    <div class="finding">
+      <h3>The engines differ in volume more than in volatility.</h3>
+      <p>AI Overview is the most stable on the response layer: top brand holds in 47% of repeated runs, against Copilot at 43% and SearchGPT at 35%. On citations, Copilot returns far fewer per prompt — median 29 against SearchGPT's 90 and AI Overview's 67.</p>
+      <p><strong>No single engine is a safe proxy for the others. If only one can be monitored as a baseline, AI Overview is the most reliable.</strong></p>
+      <div class="verify-note"><span class="vtag">V5 — Reframed.</span> An earlier read of "Copilot citations 2× more volatile" was largely a volume artifact. Once citation volume is equalised, Copilot is no worse and on some metrics the most stable. The robust finding is the volume gap, not a stability gap.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 -->
+<section class="block alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-context">Cross-cutting</div>
+      <h2 class="sec-title">Brand narrative is market-specific. The plumbing is not.</h2>
+    </div>
+
+    <div class="finding">
+      <h3>The leading brand changes by country. The source mix does not.</h3>
+      <p>On unbranded prompts, the top brand is Scania in Sweden (18.4%), Freightliner in the US (9.2%) and Mercedes-Benz in Germany (16.0%). The citation source-category mix is structurally identical across all three markets. Largest per-category spread: 3.7 percentage points.</p>
+      <p><strong>The kinds of sources LLMs trust are globally homogeneous. What differs by market is which brands those sources elevate.</strong></p>
+    </div>
+
+    <div class="finding">
+      <h3>One competitor dominates narrative share.</h3>
+      <p>Mercedes-Benz is named 342 times across 99 comparative prompts. More than any other brand in any other intent. On branded comparisons — where users name brands — Mercedes-Benz still leads at 72 mentions, despite being explicitly named in only about a fifth of prompts.</p>
+      <p><strong>Narrative share concentrates heavily on a few incumbents, named or not. The top five brands account for 43% of all mentions.</strong></p>
+      <div class="verify-note"><span class="vtag">V4 — Pass.</span> A 25-response audit found 100% of Mercedes-Benz mentions in commercial-vehicle context. No passenger-car drift.</div>
+    </div>
+
+    <div class="finding">
+      <h3>LLMs name four times more brands when comparing than when explaining.</h3>
+      <p>Average brands named per response, by intent: comparative and comparison prompts ~4.2. Branded comparison 3.2. Recommendation 1.7. Informational, support and technical ~1.1. Source mix shifts too — informational prompts ("how does X work") pull only 6% manufacturer-owned citations. Action and transactional prompts ("find a dealer") jump to 22%.</p>
+      <p><strong>Owned content is least visible exactly at the awareness stage.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5 -->
+<section class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-context">Counterweight</div>
+      <h2 class="sec-title">What is not happening.</h2>
+      <p class="sec-deck">Three common assumptions the data does not support.</p>
+    </div>
+
+    <div class="finding">
+      <h3>Press releases barely register.</h3>
+      <p>Just 2.4% of top-cited URLs match newsroom or press-release patterns. <strong>PR distribution is not a meaningful AI-visibility lever in this category.</strong></p>
+    </div>
+    <div class="finding">
+      <h3>Wikipedia is under 1%.</h3>
+      <p>Only 2 of the top 100 cited URLs are Wikipedia pages. <strong>Far below the common "AI cites Wikipedia" assumption.</strong></p>
+    </div>
+    <div class="finding">
+      <h3>AI Overview selectively refuses a specific set of prompts.</h3>
+      <p>Thirteen prompts get persistent no-render across all three markets. They cluster on informational and decision-stage queries. Branded prompts are under-represented in the refusal set. <strong>AIO's silence is patterned, not random.</strong></p>
+    </div>
+  </div>
+</section>
+
+<!-- THROUGHLINE -->
+<section class="block alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-context">The throughline</div>
+      <h2 class="sec-title">Branded against unbranded prompts.</h2>
+      <p class="sec-deck">The cleanest single lens on the dataset is whether the user named a brand in the prompt.</p>
+    </div>
+
+    <div class="tab">
+      <table>
+        <thead>
+          <tr><th>Metric</th><th class="num">Unbranded (221)</th><th class="num">Branded (29)</th><th>Direction</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="lead">Brand-set agreement across LLMs</td><td class="num">0.33</td><td class="num">0.80</td><td>Naming a brand makes engines converge</td></tr>
+          <tr><td class="lead">Source-set agreement across LLMs</td><td class="num">0.03</td><td class="num">0.04</td><td>Evidence chain stays disjoint either way</td></tr>
+          <tr><td class="lead">Same brands, different sources</td><td class="num">19%</td><td class="num">73%</td><td>Triggered by branded prompts</td></tr>
+          <tr><td class="lead">Brand mention to own-link rate</td><td class="num">39%</td><td class="num">73%</td><td>Branded answers ~2× more likely to link</td></tr>
+          <tr><td class="lead">Top-brand change across runs</td><td class="num">58%</td><td class="num">~30%</td><td>Branded prompts anchor the answer</td></tr>
+          <tr><td class="lead">Cross-run brand-set agreement</td><td class="num">0.37</td><td class="num">0.84</td><td>Naming the brand stabilises it</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="through-close">Naming a brand anchors which brands get discussed. It does not anchor which sources get cited. The brand list converges. The evidence chain does not.</p>
+  </div>
+</section>
+
+<!-- SCOPE -->
+<section class="block">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-context">Scope</div>
+      <h2 class="sec-title">What this evidence covers, and what it does not.</h2>
+      <p class="sec-deck">Response and citation data can see how brands are surfaced and sourced. It cannot see agent transactions or commerce surfaces.</p>
+    </div>
+
+    <div class="scope">
+      <div>
+        <div class="stag">Directly supported</div>
+        <ul>
+          <li><b>Track A</b> Why AI visibility must be measured as a tracked distribution across multiple engines.</li>
+          <li><b>Track B</b> What format and structure of content actually gets cited.</li>
+          <li><b>Track E</b> The off-domain, long-tail, third-party nature of the citation graph.</li>
+        </ul>
+      </div>
+      <div>
+        <div class="stag">Outside this evidence</div>
+        <ul>
+          <li><b>Track C</b> Agentic readiness. Rests on Cloudflare crawl-to-refer and bot-traffic data.</li>
+          <li><b>Track D</b> AI ads and Universal Commerce Protocol. Rests on platform announcements.</li>
+        </ul>
+        <p>These tracks draw on other evidence streams in the deck. The findings here do not stretch to imply otherwise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VERIFICATION -->
+<section class="block alt">
+  <div class="wrap">
+    <div class="sec-head">
+      <div class="sec-context">Methodology</div>
+      <h2 class="sec-title">Five hardening checks before publication.</h2>
+      <p class="sec-deck">Each finding most likely to be challenged was re-tested. Direction held in every case. Two pass outright; one had its figure revised; two were reframed.</p>
+    </div>
+
+    <div class="vlist">
+      <div class="vrow">
+        <div class="vcode">V1</div>
+        <div class="vresult ref">Reframed</div>
+        <div class="vtext"><b>Snapshot provenance</b><span>The eight runs share a 44-minute window. This is sampling stochasticity, not temporal drift. Magnitude unchanged.</span></div>
+      </div>
+      <div class="vrow">
+        <div class="vcode">V2</div>
+        <div class="vresult pass">Pass</div>
+        <div class="vtext"><b>Ahrefs language coverage</b><span>Only 5.2% of no-keyword URLs are non-English. The 93% Google-invisibility figure is not a coverage artifact.</span></div>
+      </div>
+      <div class="vrow">
+        <div class="vcode">V3</div>
+        <div class="vresult rev">Revised</div>
+        <div class="vtext"><b>Self-source ratio base</b><span>Aligned bases give ~7× (not 14×). Brands are named ~7× more than their own site is cited.</span></div>
+      </div>
+      <div class="vrow">
+        <div class="vcode">V4</div>
+        <div class="vresult pass">Pass</div>
+        <div class="vtext"><b>Mercedes-Benz context</b><span>100% of audited mentions are commercial-vehicle context. No passenger-car contamination.</span></div>
+      </div>
+      <div class="vrow">
+        <div class="vcode">V5</div>
+        <div class="vresult ref">Reframed</div>
+        <div class="vtext"><b>Copilot volatility</b><span>Apparent volatility was a volume effect. Volume-controlled, Copilot is no less stable. The gap is in volume.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSER -->
+<section class="closer">
+  <div class="wrap">
+    <p class="pull"><em>The brand list converges.</em><br><b>The evidence chain does not.</b></p>
+    <p class="note">Findings only. Volvo Group brands treated as data points among all tracked manufacturers. Horizon (H-) tags excluded from all grouping. Numbers stand as reported in the underlying verification pass dated 28 May 2026.</p>
+  </div>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GEO Audit Campaign Tracker — GO MO Group</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface-2: #1a1a26;
+    --surface-3: #22222f;
+    --border: #2a2a3a;
+    --text: #e8e8f0;
+    --text-muted: #8888a0;
+    --accent: #6c5ce7;
+    --accent-glow: rgba(108, 92, 231, 0.3);
+    --accent-2: #a29bfe;
+    --green: #00cec9;
+    --green-glow: rgba(0, 206, 201, 0.3);
+    --gold: #fdcb6e;
+    --gold-glow: rgba(253, 203, 110, 0.3);
+    --red: #ff6b6b;
+    --gradient-1: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    --gradient-2: linear-gradient(135deg, #00cec9, #55efc4);
+    --gradient-3: linear-gradient(135deg, #fdcb6e, #f8a52d);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Ambient background */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(108, 92, 231, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(0, 206, 201, 0.05) 0%, transparent 50%);
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    text-align: center;
+    margin-bottom: 48px;
+  }
+  .header .badge {
+    display: inline-block;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 100px;
+    padding: 6px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 16px;
+  }
+  .header h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 800;
+    letter-spacing: -1px;
+    background: var(--gradient-1);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1.15;
+  }
+  .header p {
+    margin-top: 10px;
+    color: var(--text-muted);
+    font-size: 16px;
+    font-weight: 400;
+  }
+  .header .deadline {
+    display: inline-block;
+    margin-top: 14px;
+    padding: 6px 16px;
+    border-radius: 8px;
+    background: rgba(255, 107, 107, 0.1);
+    border: 1px solid rgba(255, 107, 107, 0.25);
+    color: var(--red);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .header .deadline span {
+    font-weight: 400;
+    opacity: 0.8;
+  }
+
+  /* ─── MAIN PROGRESS ─── */
+  .main-progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 48px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+  .ring-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    flex-shrink: 0;
+  }
+  .ring-container svg {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+  }
+  .ring-bg {
+    fill: none;
+    stroke: var(--surface-3);
+    stroke-width: 12;
+  }
+  .ring-fill {
+    fill: none;
+    stroke: url(#ringGradient);
+    stroke-width: 12;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .ring-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+  .ring-center .number {
+    font-size: 52px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+  .ring-center .label {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    font-weight: 500;
+  }
+  .progress-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 18px 24px;
+    min-width: 200px;
+  }
+  .stat-card .stat-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .stat-card .stat-value {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -1px;
+  }
+  .stat-card .stat-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  /* ─── AGENCY GRID ─── */
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    border-radius: 2px;
+    background: var(--gradient-1);
+  }
+  .agency-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .agency-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+  .agency-card:hover {
+    border-color: var(--accent);
+    box-shadow: 0 0 20px var(--accent-glow);
+  }
+  .agency-card.bonus {
+    border-style: dashed;
+  }
+  .agency-card .agency-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .agency-card .agency-name {
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .agency-card .agency-count {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--accent-2);
+  }
+  .agency-card .agency-count span {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-muted);
+  }
+  .agency-card .bar-track {
+    width: 100%;
+    height: 8px;
+    background: var(--surface-3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+  .agency-card .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: var(--gradient-1);
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .agency-card .bar-fill.complete {
+    background: var(--gradient-2);
+  }
+  .agency-card .bar-fill.over {
+    background: var(--gradient-3);
+  }
+  .agency-card .agency-bottom {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .agency-card .bonus-label {
+    display: inline-block;
+    background: rgba(253, 203, 110, 0.12);
+    color: var(--gold);
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  /* ─── FORM ─── */
+  .form-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 36px;
+    margin-bottom: 48px;
+  }
+  .form-section h2 {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .form-section .form-sub {
+    color: var(--text-muted);
+    font-size: 14px;
+    margin-bottom: 28px;
+  }
+  .form-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+  }
+  .form-group {
+    flex: 1;
+    min-width: 180px;
+  }
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .form-group select,
+  .form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 500;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .form-group select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238888a0' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 40px;
+  }
+  .form-group select:focus,
+  .form-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-glow);
+  }
+  .form-group input[type="number"] {
+    -moz-appearance: textfield;
+  }
+  .form-group input::-webkit-outer-spin-button,
+  .form-group input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  .btn {
+    padding: 12px 32px;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.3s;
+    min-width: 160px;
+  }
+  .btn:active { transform: scale(0.97); }
+  .btn-primary {
+    background: var(--gradient-1);
+    color: #fff;
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+  .btn-primary:hover {
+    box-shadow: 0 6px 30px var(--accent-glow);
+  }
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--surface-2);
+    border: 1px solid var(--green);
+    border-radius: 12px;
+    padding: 14px 28px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--green);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 100;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.error { border-color: var(--red); color: var(--red); }
+
+  /* ─── LEADERBOARD ─── */
+  .leaderboard {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 32px;
+    margin-bottom: 48px;
+  }
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .lb-row:last-child { border-bottom: none; }
+  .lb-rank {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    background: var(--surface-3);
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+  .lb-rank.gold { background: rgba(253, 203, 110, 0.2); color: var(--gold); }
+  .lb-rank.silver { background: rgba(200, 200, 220, 0.15); color: #c8c8dc; }
+  .lb-rank.bronze { background: rgba(225, 177, 120, 0.15); color: #e1b178; }
+  .lb-name { flex: 1; font-weight: 600; font-size: 15px; }
+  .lb-bar-wrap { flex: 2; display: flex; align-items: center; gap: 12px; }
+  .lb-bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--surface-3);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .lb-bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--gradient-1);
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .lb-pct {
+    font-size: 14px;
+    font-weight: 700;
+    min-width: 48px;
+    text-align: right;
+    color: var(--accent-2);
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    text-align: center;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+
+  /* ─── CONFIG MODAL ─── */
+  .config-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: rgba(10, 10, 15, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 24px;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 13px;
+  }
+  .config-bar.hidden { display: none; }
+  .config-bar input {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 12px;
+    color: var(--text);
+    font-family: inherit;
+    font-size: 13px;
+    width: 420px;
+  }
+  .config-bar input:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  .config-bar button {
+    background: var(--gradient-1);
+    border: none;
+    border-radius: 8px;
+    padding: 6px 16px;
+    color: #fff;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .config-bar .status {
+    font-size: 12px;
+    color: var(--green);
+  }
+  .config-bar .status.disconnected { color: var(--red); }
+
+  /* Loading overlay */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    transition: opacity 0.5s;
+  }
+  .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+  .spinner {
+    width: 48px;
+    height: 48px;
+    border: 3px solid var(--surface-3);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .container { padding: 24px 16px 60px; }
+    .main-progress { gap: 24px; }
+    .ring-container { width: 180px; height: 180px; }
+    .ring-center .number { font-size: 40px; }
+    .form-row { flex-direction: column; }
+    .btn { width: 100%; }
+    .agency-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Config bar for Google Apps Script URL -->
+<div class="config-bar" id="configBar">
+  <span>🔗 Backend URL:</span>
+  <input type="text" id="apiUrlInput" placeholder="Paste your Google Apps Script Web App URL here…" />
+  <button onclick="saveApiUrl()">Connect</button>
+  <span class="status disconnected" id="configStatus">Not connected</span>
+</div>
+
+<!-- Loading -->
+<div class="loading-overlay" id="loader">
+  <div class="spinner"></div>
+</div>
+
+<div class="container" style="padding-top: 80px;">
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="badge">GO MO Group Campaign</div>
+    <h1>GEO Audit Tracker</h1>
+    <p>56 audits. 7 agencies. One shared goal.</p>
+    <div class="deadline">
+      <span>Deadline:</span> July 1, 2026 — <span id="daysLeft"></span>
+    </div>
+  </header>
+
+  <!-- MAIN PROGRESS -->
+  <div class="main-progress">
+    <div class="ring-container">
+      <svg viewBox="0 0 220 220">
+        <defs>
+          <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#6c5ce7"/>
+            <stop offset="100%" stop-color="#00cec9"/>
+          </linearGradient>
+        </defs>
+        <circle class="ring-bg" cx="110" cy="110" r="95"/>
+        <circle class="ring-fill" id="ringFill" cx="110" cy="110" r="95"
+                stroke-dasharray="597" stroke-dashoffset="597"/>
+      </svg>
+      <div class="ring-center">
+        <div class="number" id="ringPct">0%</div>
+        <div class="label">of target</div>
+      </div>
+    </div>
+    <div class="progress-stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Sold</div>
+        <div class="stat-value" id="totalSold">0 <span style="font-size:16px;color:var(--text-muted);font-weight:500;">/ 56</span></div>
+        <div class="stat-sub" id="totalRemaining">56 remaining</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Agencies Reporting</div>
+        <div class="stat-value" id="agenciesReporting">0 <span style="font-size:16px;color:var(--text-muted);font-weight:500;">/ 7</span></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Last Updated</div>
+        <div class="stat-value" style="font-size:16px;" id="lastUpdated">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AGENCY CARDS -->
+  <div class="section-title">Agency Progress</div>
+  <div class="agency-grid" id="agencyGrid"></div>
+
+  <!-- LEADERBOARD -->
+  <div class="leaderboard">
+    <div class="section-title" style="margin-bottom:16px;">Leaderboard — % of Individual Goal</div>
+    <div id="leaderboard"></div>
+  </div>
+
+  <!-- FORM -->
+  <div class="form-section">
+    <h2>Update Your Count</h2>
+    <p class="form-sub">Select your agency and enter the total number of GEO audits sold so far.</p>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Agency</label>
+        <select id="agencySelect">
+          <option value="">Choose agency…</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>GEO Audits Sold (total)</label>
+        <input type="number" id="countInput" min="0" max="999" placeholder="e.g. 5" />
+      </div>
+      <button class="btn btn-primary" id="submitBtn" onclick="submitUpdate()" disabled>
+        Submit Update
+      </button>
+    </div>
+  </div>
+
+  <footer class="footer">
+    GO MO Group — GEO Audit Campaign 2026 &nbsp;·&nbsp; Target: 56 audits by July 1
+  </footer>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── CONFIG ───
+const AGENCIES = [
+  { id: 'genero',     name: 'Genero',       goal: 20, sold: 0 },
+  { id: 'gomogroup',  name: 'GO MO Group',  goal: 12, sold: 0 },
+  { id: 'wgp',        name: 'WGP',          goal: 7,  sold: 0 },
+  { id: 'innosearch', name: 'Innosearch',   goal: 7,  sold: 0 },
+  { id: 'garfield',   name: 'Garfield',     goal: 6,  sold: 0 },
+  { id: 'semway',     name: 'Semway',       goal: 6,  sold: 0 },
+  { id: 'densou',     name: 'Densou',       goal: 0,  sold: 0, bonus: true },
+];
+const TOTAL_TARGET = 56;
+const DEADLINE = new Date('2026-07-01T00:00:00');
+
+let API_URL = localStorage.getItem('geo_api_url') || '';
+let agencyData = JSON.parse(JSON.stringify(AGENCIES));
+
+// ─── INIT ───
+document.addEventListener('DOMContentLoaded', () => {
+  updateDaysLeft();
+  populateSelect();
+  enableSubmitCheck();
+
+  if (API_URL) {
+    document.getElementById('apiUrlInput').value = API_URL;
+    document.getElementById('configStatus').textContent = 'Connected';
+    document.getElementById('configStatus').classList.remove('disconnected');
+    fetchData();
+  } else {
+    // Demo mode — use defaults
+    renderAll();
+    hideLoader();
+  }
+});
+
+function saveApiUrl() {
+  const url = document.getElementById('apiUrlInput').value.trim();
+  if (!url) return;
+  API_URL = url;
+  localStorage.setItem('geo_api_url', url);
+  document.getElementById('configStatus').textContent = 'Connecting…';
+  fetchData();
+}
+
+// ─── DATA FETCH ───
+async function fetchData() {
+  try {
+    const res = await fetch(API_URL + '?action=getData');
+    const json = await res.json();
+    if (json.success && json.data) {
+      json.data.forEach(row => {
+        const agency = agencyData.find(a => a.id === row.id);
+        if (agency) {
+          agency.sold = parseInt(row.sold) || 0;
+          if (row.lastUpdated) agency.lastUpdated = row.lastUpdated;
+        }
+      });
+    }
+    document.getElementById('configStatus').textContent = 'Connected ✓';
+    document.getElementById('configStatus').classList.remove('disconnected');
+  } catch (e) {
+    document.getElementById('configStatus').textContent = 'Connection failed';
+    document.getElementById('configStatus').classList.add('disconnected');
+    console.error('Fetch error:', e);
+  }
+  renderAll();
+  hideLoader();
+}
+
+// ─── SUBMIT ───
+async function submitUpdate() {
+  const select = document.getElementById('agencySelect');
+  const input = document.getElementById('countInput');
+  const id = select.value;
+  const count = parseInt(input.value);
+  if (!id || isNaN(count) || count < 0) return;
+
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Submitting…';
+
+  // Update local
+  const agency = agencyData.find(a => a.id === id);
+  if (agency) {
+    agency.sold = count;
+    agency.lastUpdated = new Date().toLocaleString();
+  }
+
+  // Send to backend
+  if (API_URL) {
+    try {
+      await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'update', id, sold: count }),
+      });
+      showToast('Updated successfully!');
+    } catch (e) {
+      showToast('Saved locally — backend sync failed', true);
+    }
+  } else {
+    showToast('Updated (demo mode — connect backend for persistence)');
+  }
+
+  renderAll();
+  btn.disabled = false;
+  btn.textContent = 'Submit Update';
+  input.value = '';
+  select.value = '';
+}
+
+// ─── RENDER ───
+function renderAll() {
+  renderRing();
+  renderStats();
+  renderCards();
+  renderLeaderboard();
+}
+
+function renderRing() {
+  const total = agencyData.reduce((s, a) => s + a.sold, 0);
+  const pct = Math.min(total / TOTAL_TARGET, 1);
+  const circumference = 597;
+  const offset = circumference - (pct * circumference);
+  document.getElementById('ringFill').style.strokeDashoffset = offset;
+  document.getElementById('ringPct').textContent = Math.round(pct * 100) + '%';
+}
+
+function renderStats() {
+  const total = agencyData.reduce((s, a) => s + a.sold, 0);
+  const reporting = agencyData.filter(a => a.sold > 0).length;
+  document.getElementById('totalSold').innerHTML =
+    `${total} <span style="font-size:16px;color:var(--text-muted);font-weight:500;">/ ${TOTAL_TARGET}</span>`;
+  document.getElementById('totalRemaining').textContent =
+    `${Math.max(TOTAL_TARGET - total, 0)} remaining`;
+  document.getElementById('agenciesReporting').innerHTML =
+    `${reporting} <span style="font-size:16px;color:var(--text-muted);font-weight:500;">/ ${agencyData.length}</span>`;
+
+  const timestamps = agencyData.filter(a => a.lastUpdated).map(a => a.lastUpdated);
+  document.getElementById('lastUpdated').textContent = timestamps.length ? timestamps[timestamps.length - 1] : '—';
+}
+
+function renderCards() {
+  const grid = document.getElementById('agencyGrid');
+  grid.innerHTML = '';
+  agencyData.forEach(a => {
+    const pct = a.goal > 0 ? Math.min(a.sold / a.goal, 1) : 0;
+    const overGoal = a.goal > 0 && a.sold > a.goal;
+    const atGoal = a.goal > 0 && a.sold >= a.goal;
+    let barClass = '';
+    if (overGoal) barClass = 'over';
+    else if (atGoal) barClass = 'complete';
+
+    const card = document.createElement('div');
+    card.className = 'agency-card' + (a.bonus ? ' bonus' : '');
+    card.innerHTML = `
+      <div class="agency-top">
+        <div>
+          <div class="agency-name">${a.name}</div>
+          ${a.bonus ? '<span class="bonus-label">Bonus Agency</span>' : ''}
+        </div>
+        <div class="agency-count">${a.sold}${a.goal ? `<span> / ${a.goal}</span>` : '<span> sold</span>'}</div>
+      </div>
+      ${a.goal ? `
+        <div class="bar-track">
+          <div class="bar-fill ${barClass}" style="width: ${Math.round(pct * 100)}%"></div>
+        </div>
+        <div class="agency-bottom">
+          <span>${Math.round(pct * 100)}% of goal</span>
+          <span>${Math.max(a.goal - a.sold, 0)} to go</span>
+        </div>
+      ` : `
+        <div class="agency-bottom" style="margin-top:8px;">
+          <span>No fixed target — every sale is a bonus!</span>
+        </div>
+      `}
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function renderLeaderboard() {
+  const ranked = agencyData
+    .filter(a => a.goal > 0)
+    .map(a => ({ ...a, pct: a.goal > 0 ? a.sold / a.goal : 0 }))
+    .sort((a, b) => b.pct - a.pct);
+
+  const container = document.getElementById('leaderboard');
+  container.innerHTML = '';
+  ranked.forEach((a, i) => {
+    const rankClass = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+    const row = document.createElement('div');
+    row.className = 'lb-row';
+    row.innerHTML = `
+      <div class="lb-rank ${rankClass}">${i + 1}</div>
+      <div class="lb-name">${a.name}</div>
+      <div class="lb-bar-wrap">
+        <div class="lb-bar-track">
+          <div class="lb-bar-fill" style="width: ${Math.min(Math.round(a.pct * 100), 100)}%"></div>
+        </div>
+        <div class="lb-pct">${Math.round(a.pct * 100)}%</div>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+
+  // Densou bonus row
+  const densou = agencyData.find(a => a.bonus);
+  if (densou && densou.sold > 0) {
+    const row = document.createElement('div');
+    row.className = 'lb-row';
+    row.innerHTML = `
+      <div class="lb-rank" style="background:rgba(253,203,110,0.15);color:var(--gold);">⭐</div>
+      <div class="lb-name">${densou.name} <span class="bonus-label" style="margin-left:8px;">bonus</span></div>
+      <div class="lb-bar-wrap">
+        <div class="lb-pct" style="color:var(--gold);">${densou.sold} sold</div>
+      </div>
+    `;
+    container.appendChild(row);
+  }
+}
+
+// ─── HELPERS ───
+function populateSelect() {
+  const sel = document.getElementById('agencySelect');
+  agencyData.forEach(a => {
+    const opt = document.createElement('option');
+    opt.value = a.id;
+    opt.textContent = a.name + (a.bonus ? ' (Bonus)' : '');
+    sel.appendChild(opt);
+  });
+}
+
+function enableSubmitCheck() {
+  const sel = document.getElementById('agencySelect');
+  const inp = document.getElementById('countInput');
+  const btn = document.getElementById('submitBtn');
+  const check = () => { btn.disabled = !sel.value || inp.value === ''; };
+  sel.addEventListener('change', check);
+  inp.addEventListener('input', check);
+}
+
+function updateDaysLeft() {
+  const now = new Date();
+  const diff = Math.ceil((DEADLINE - now) / (1000 * 60 * 60 * 24));
+  document.getElementById('daysLeft').textContent = diff > 0 ? `${diff} days left` : 'Deadline passed!';
+}
+
+function showToast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (isError ? ' error' : '');
+  setTimeout(() => t.className = 'toast', 3000);
+}
+
+function hideLoader() {
+  document.getElementById('loader').classList.add('hidden');
+}
+</script>
+</body>
+</html>
