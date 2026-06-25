@@ -600,10 +600,16 @@
             <stop offset="0%" stop-color="#6c5ce7"/>
             <stop offset="100%" stop-color="#00cec9"/>
           </linearGradient>
+          <linearGradient id="ringOverGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fdcb6e"/>
+            <stop offset="100%" stop-color="#f8a52d"/>
+          </linearGradient>
         </defs>
         <circle class="ring-bg" cx="110" cy="110" r="95"/>
         <circle class="ring-fill" id="ringFill" cx="110" cy="110" r="95"
                 stroke-dasharray="597" stroke-dashoffset="597"/>
+        <circle class="ring-fill" id="ringOverFill" cx="110" cy="110" r="81"
+                stroke="url(#ringOverGradient)" stroke-dasharray="509" stroke-dashoffset="509"/>
       </svg>
       <div class="ring-center">
         <div class="number" id="ringPct">0%</div>
@@ -822,11 +828,18 @@ function renderAll() {
 
 function renderRing() {
   const total = agencyData.reduce((s, a) => s + a.sold, 0);
-  const pct = Math.min(total / TOTAL_TARGET, 1);
-  const circumference = 597;
-  const offset = circumference - (pct * circumference);
-  document.getElementById('ringFill').style.strokeDashoffset = offset;
-  document.getElementById('ringPct').textContent = Math.round(pct * 100) + '%';
+  const percentage = Math.round((total / TOTAL_TARGET) * 100);
+  const visualPercentage = Math.min(percentage, 200);
+  const targetProgress = Math.min(visualPercentage, 100) / 100;
+  const overTargetProgress = Math.max(visualPercentage - 100, 0) / 100;
+  const targetCircumference = 597;
+  const overTargetCircumference = 509;
+
+  document.getElementById('ringFill').style.strokeDashoffset =
+    targetCircumference - (targetProgress * targetCircumference);
+  document.getElementById('ringOverFill').style.strokeDashoffset =
+    overTargetCircumference - (overTargetProgress * overTargetCircumference);
+  document.getElementById('ringPct').textContent = visualPercentage + '%';
 }
 
 function renderStats() {
