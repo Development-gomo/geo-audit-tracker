@@ -855,8 +855,31 @@ function renderStats() {
   document.getElementById('agenciesReporting').innerHTML =
     `${reporting} <span style="font-size:16px;color:var(--text-muted);font-weight:500;">/ ${agencyData.length}</span>`;
 
-  const timestamps = agencyData.filter(a => a.lastUpdated).map(a => a.lastUpdated);
-  document.getElementById('lastUpdated').textContent = timestamps.length ? timestamps[timestamps.length - 1] : '—';
+  const latestUpdated = getLatestUpdated(agencyData);
+  document.getElementById('lastUpdated').textContent = latestUpdated || '—';
+}
+
+function getLatestUpdated(agencies) {
+  const latest = agencies.reduce((currentLatest, agency) => {
+    if (!agency.lastUpdated) return currentLatest;
+
+    const time = parseTimestamp(agency.lastUpdated);
+    if (!currentLatest) return { value: agency.lastUpdated, time };
+    if (isNaN(currentLatest.time)) return { value: agency.lastUpdated, time };
+    if (isNaN(time)) return currentLatest;
+
+    return time > currentLatest.time ? { value: agency.lastUpdated, time } : currentLatest;
+  }, null);
+
+  return latest ? latest.value : '';
+}
+
+function parseTimestamp(value) {
+  if (value instanceof Date) return value.getTime();
+
+  const timestamp = String(value).trim();
+  const parsed = new Date(timestamp.replace(' ', 'T')).getTime();
+  return parsed;
 }
 
 function renderCards() {
