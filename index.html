@@ -845,10 +845,13 @@ function renderRing() {
 function renderStats() {
   const total = agencyData.reduce((s, a) => s + a.sold, 0);
   const reporting = agencyData.filter(a => a.sold > 0).length;
+  const differenceFromTarget = TOTAL_TARGET - total;
   document.getElementById('totalSold').innerHTML =
     `${total} <span style="font-size:16px;color:var(--text-muted);font-weight:500;">/ ${TOTAL_TARGET}</span>`;
   document.getElementById('totalRemaining').textContent =
-    `${Math.max(TOTAL_TARGET - total, 0)} remaining`;
+    differenceFromTarget >= 0
+      ? `${differenceFromTarget} remaining`
+      : `${Math.abs(differenceFromTarget)} additional sold`;
   document.getElementById('agenciesReporting').innerHTML =
     `${reporting} <span style="font-size:16px;color:var(--text-muted);font-weight:500;">/ ${agencyData.length}</span>`;
 
@@ -860,9 +863,13 @@ function renderCards() {
   const grid = document.getElementById('agencyGrid');
   grid.innerHTML = '';
   agencyData.forEach(a => {
-    const pct = a.goal > 0 ? Math.min(a.sold / a.goal, 1) : 0;
+    const pct = a.goal > 0 ? a.sold / a.goal : 0;
+    const barPct = Math.min(pct, 1);
     const overGoal = a.goal > 0 && a.sold > a.goal;
     const atGoal = a.goal > 0 && a.sold >= a.goal;
+    const remainingText = overGoal
+      ? `${a.sold - a.goal} extra sold`
+      : `${a.goal - a.sold} to go`;
     let barClass = '';
     if (overGoal) barClass = 'over';
     else if (atGoal) barClass = 'complete';
@@ -879,11 +886,11 @@ function renderCards() {
       </div>
       ${a.goal ? `
         <div class="bar-track">
-          <div class="bar-fill ${barClass}" style="width: ${Math.round(pct * 100)}%"></div>
+          <div class="bar-fill ${barClass}" style="width: ${Math.round(barPct * 100)}%"></div>
         </div>
         <div class="agency-bottom">
           <span>${Math.round(pct * 100)}% of goal</span>
-          <span>${Math.max(a.goal - a.sold, 0)} to go</span>
+          <span>${remainingText}</span>
         </div>
       ` : `
         <div class="agency-bottom" style="margin-top:8px;">
